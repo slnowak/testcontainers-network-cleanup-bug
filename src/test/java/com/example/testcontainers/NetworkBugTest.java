@@ -58,7 +58,7 @@ class NetworkBugTest {
         var container = new GenericContainer<>("busybox").withNetwork(network);
         container.start();
 
-        var compose = new DockerComposeContainer<>(file("docker-compose.yml"), file("docker-compose.override.yml"))
+        var compose = new DockerComposeContainer<>(file("docker-compose.yml"))
                 .withLocalCompose(true)
                 .withEnv("TEST_NETWORK_NAME", networkName);
         compose.start();
