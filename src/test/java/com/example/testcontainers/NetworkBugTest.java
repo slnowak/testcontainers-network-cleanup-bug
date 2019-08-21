@@ -49,7 +49,7 @@ class NetworkBugTest {
 
     @Test
     void network_mentioned_in_docker_compose_file_with_zookeeper_and_without_external_container_is_not_cleaned_up_afterwards() throws Exception {
-        var networkName = "not-cleaned-up-with-zookeper-but-without-external-container-" + UUID.randomUUID().toString();
+        var networkName = "not-cleaned-up-with-zookeper-and-without-external-container-" + UUID.randomUUID().toString();
         var network = Network
                 .builder()
                 .createNetworkCmdModifier(cmd -> cmd.withName(networkName))
