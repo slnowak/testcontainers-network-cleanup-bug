@@ -16,7 +16,7 @@ class NetworkBugTest {
 
     @Test
     void network_not_referenced_in_docker_compose_is_cleaned_up_properly() {
-        var networkName = "cleaned-up-not-referenced-in-docker-compose" + UUID.randomUUID().toString();
+        var networkName = "cleaned-up-not-referenced-in-docker-compose-" + UUID.randomUUID().toString();
         var network = Network
                 .builder()
                 .createNetworkCmdModifier(cmd -> cmd.withName(networkName))
@@ -48,6 +48,25 @@ class NetworkBugTest {
     }
 
     @Test
+    void network_mentioned_in_docker_compose_file_with_zookeeper_and_without_external_container_is_not_cleaned_up_afterwards() throws Exception {
+        var networkName = "not-cleaned-up-with-zookeper-but-without-external-container-" + UUID.randomUUID().toString();
+        var network = Network
+                .builder()
+                .createNetworkCmdModifier(cmd -> cmd.withName(networkName))
+                .build();
+
+        // make sure we initialize network
+        network.getId();
+
+        var compose = new DockerComposeContainer<>(file("docker-compose.zookeeper.yml"))
+                .withLocalCompose(true)
+                .withEnv("TEST_NETWORK_NAME", networkName);
+        compose.start();
+
+        assertTrue(true);
+    }
+
+    @Test
     void network_mentioned_in_docker_compose_file_with_busybox_and_external_container_is_cleaned_up_properly() throws Exception {
         var networkName = "cleaned-up-with-busybox-and-external-container-" + UUID.randomUUID().toString();
         var network = Network
@@ -67,21 +86,8 @@ class NetworkBugTest {
     }
 
     @Test
-    void network_mentioned_in_docker_compose_file_with_zookeeper_but_without_external_container_is_cleaned_up_properly() throws Exception {
-        var networkName = "cleaned-up-with-zookeper-but-without-external-container" + UUID.randomUUID().toString();
-        Network.builder().createNetworkCmdModifier(cmd -> cmd.withName(networkName)).build().getId();
-
-        var compose = new DockerComposeContainer<>(file("docker-compose.zookeeper.yml"))
-                .withLocalCompose(true)
-                .withEnv("TEST_NETWORK_NAME", networkName);
-        compose.start();
-
-        assertTrue(true);
-    }
-
-    @Test
     void network_is_cleaned_up_properly_if_you_disconnect_containers_from_it() throws Exception {
-        var networkName = "cleaned-up-when-containers-disconnected" + UUID.randomUUID().toString();
+        var networkName = "cleaned-up-when-containers-disconnected-" + UUID.randomUUID().toString();
         var network = Network
                 .builder()
                 .createNetworkCmdModifier(cmd -> cmd.withName(networkName))
